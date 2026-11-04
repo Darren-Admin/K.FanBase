@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LA8 Creator Hub</title>
+<title>K-Studios Creator Hub<br> Creator/Owner: Kachi</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Segoe UI;
+font-family:Segoe UI,sans-serif;
 }
 
 body{
@@ -26,11 +23,11 @@ nav{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:20px;
+padding:15px 30px;
 background:#111827;
 position:sticky;
 top:0;
-z-index:1000;
+z-index:999;
 }
 
 .logo{
@@ -40,24 +37,29 @@ color:#00cfff;
 }
 
 nav ul{
+list-style:none;
 display:flex;
 gap:20px;
-list-style:none;
 }
 
 nav a{
-color:white;
 text-decoration:none;
+color:white;
+}
+
+button{
+cursor:pointer;
 }
 
 .hero{
-height:80vh;
+height:70vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
-background:linear-gradient(135deg,#111827,#1d4ed8);
+padding:20px;
+background:linear-gradient(135deg,#111827,#2563eb);
 }
 
 .hero h1{
@@ -65,24 +67,16 @@ font-size:4rem;
 }
 
 .hero p{
+margin-top:20px;
 max-width:700px;
-margin-top:20px;
 }
 
-.hero button{
+.primary-btn{
 margin-top:20px;
-}
-
-button{
+background:#00cfff;
 padding:12px 20px;
 border:none;
 border-radius:8px;
-background:#00cfff;
-cursor:pointer;
-}
-
-section{
-padding:40px;
 }
 
 .dashboard{
@@ -98,40 +92,33 @@ padding:25px;
 border-radius:15px;
 }
 
+section{
+padding:30px;
+}
+
 input,
 textarea,
 select{
 width:100%;
 padding:12px;
-margin-top:10px;
-margin-bottom:10px;
+margin:10px 0;
 border:none;
-border-radius:10px;
+border-radius:8px;
 }
 
-.modal{
-display:none;
-position:fixed;
-left:0;
-top:0;
+.submit-btn{
+background:#00cfff;
+padding:12px;
+border:none;
+border-radius:8px;
 width:100%;
-height:100%;
-background:rgba(0,0,0,.8);
-justify-content:center;
-align-items:center;
 }
 
-.modal-content{
-background:#111827;
-padding:30px;
-width:400px;
-border-radius:15px;
-}
-
-.close{
-float:right;
-cursor:pointer;
-font-size:25px;
+.project{
+padding:15px;
+margin-top:12px;
+background:#1e293b;
+border-radius:10px;
 }
 
 .profile{
@@ -145,23 +132,37 @@ text-align:center;
 width:120px;
 height:120px;
 border-radius:50%;
-background:#1e293b;
+background:#334155;
 margin:auto;
 margin-bottom:15px;
 }
 
-.project{
-background:#1e293b;
-padding:15px;
-border-radius:10px;
-margin-top:10px;
+.modal{
+display:none;
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.85);
+justify-content:center;
+align-items:center;
 }
 
-#notifications{
-list-style:none;
+.modal-content{
+background:#111827;
+padding:30px;
+width:400px;
+border-radius:12px;
 }
 
-#notifications li{
+.close{
+float:right;
+cursor:pointer;
+font-size:24px;
+}
+
+.notification{
 background:#1e293b;
 padding:10px;
 margin-top:10px;
@@ -172,54 +173,47 @@ footer{
 padding:20px;
 text-align:center;
 background:#111827;
+margin-top:30px;
 }
-
 </style>
-
 </head>
 
 <body>
 
 <nav>
-
-<div class="logo">
-LA8 CREATOR HUB
-</div>
+<div class="logo">K-Studios HUB</div>
 
 <ul>
-<li><a href="#home">Home</a></li>
-<li><a href="#projects">Projects</a></li>
-<li><a href="#team">Join Team</a></li>
 <li><a href="#profile">Profile</a></li>
+<li><a href="#projects">Projects</a></li>
+<li><a href="#team">Team</a></li>
+<li><a href="#forum">Forum</a></li>
 </ul>
 
 <div>
-
-<button onclick="openLogin()">
-Login
-</button>
-
-<button onclick="openSignup()">
-Signup
-</button>
-
+<button onclick="openLogin()">Login</button>
+<button onclick="openSignup()">Signup</button>
 </div>
-
 </nav>
 
-<section class="hero" id="home">
-
-<h1>LA8 Studios</h1>
-
+<section class="hero">
+<h1>K-Studios Creator Hub</h1>
 <p>
-Official Community Website
-for Fans, Developers,
-Builders, Animators and Creators.
+Official community platform for fans, builders, scripters,
+animators, testers and developers.
 </p>
 
+<button class="primary-btn" onclick="openSignup()">
+Join Community
+</button>
 </section>
 
 <div class="dashboard">
+
+<div class="card">
+<h2 id="memberCount">0</h2>
+<p>Members</p>
+</div>
 
 <div class="card">
 <h2 id="fanCount">0</h2>
@@ -232,20 +226,15 @@ Builders, Animators and Creators.
 </div>
 
 <div class="card">
-<h2 id="memberCount">0</h2>
-<p>Members</p>
-</div>
-
-<div class="card">
-<h2 id="currentRole">Guest</h2>
-<p>Role</p>
+<h2 id="onlineStatus">Offline</h2>
+<p>Status</p>
 </div>
 
 </div>
 
 <section id="profile">
 
-<h2>My Profile</h2>
+<h2>Profile</h2>
 
 <div class="profile">
 
@@ -271,31 +260,41 @@ Level: 1
 
 <h2>Notifications</h2>
 
-<ul id="notifications"></ul>
+<div id="notifications"></div>
 
 </section>
 
 <section id="projects">
 
-<h2>Projects</h2>
+<h2>Project Tracker</h2>
 
 <div id="projectArea"></div>
+
+<br>
+
+<input id="projectTitle"
+placeholder="Project Name">
+
+<textarea id="projectDescription"
+placeholder="Project Description"></textarea>
+
+<button class="submit-btn"
+onclick="createProject()">
+Create Project
+</button>
 
 </section>
 
 <section>
 
-<h2>Become A Fan</h2>
+<h2>Fan Registration</h2>
 
 <form id="fanForm">
 
-<input
-type="text"
-placeholder="Username"
-required>
+<input placeholder="Username" required>
 
-<button>
-Join Fanbase
+<button class="submit-btn">
+Become A Fan
 </button>
 
 </form>
@@ -304,15 +303,13 @@ Join Fanbase
 
 <section id="team">
 
-<h2>Join The Team</h2>
+<h2>Team Application</h2>
 
-<form id="applicationForm">
+<form id="teamForm">
 
 <input
-type="text"
 id="appName"
-placeholder="Name"
-required>
+placeholder="Username">
 
 <select id="appSkill">
 
@@ -320,7 +317,7 @@ required>
 <option>Builder</option>
 <option>Animator</option>
 <option>UI Designer</option>
-<option>VFX Artist</option>
+<option>Modeler</option>
 <option>Tester</option>
 
 </select>
@@ -329,7 +326,7 @@ required>
 id="appExperience"
 placeholder="Experience"></textarea>
 
-<button>
+<button class="submit-btn">
 Submit Application
 </button>
 
@@ -337,25 +334,23 @@ Submit Application
 
 </section>
 
-<section>
+<section id="forum">
 
-<h2>Admin Project Manager</h2>
+<h2>Community Forum</h2>
 
-<input
-id="projectTitle"
-placeholder="Project Name">
+<input id="postInput"
+placeholder="Write a post...">
 
-<textarea
-id="projectDescription"
-placeholder="Description"></textarea>
-
-<button onclick="createProject()">
-Create Project
+<button class="submit-btn"
+onclick="createPost()">
+Post
 </button>
+
+<div id="forumPosts"></div>
 
 </section>
 
-<div id="loginModal" class="modal">
+<div class="modal" id="loginModal">
 
 <div class="modal-content">
 
@@ -366,16 +361,15 @@ onclick="closeLogin()">
 
 <h2>Login</h2>
 
-<input
-id="loginUser"
+<input id="loginUser"
 placeholder="Username">
 
-<input
-id="loginPass"
+<input id="loginPass"
 type="password"
 placeholder="Password">
 
-<button onclick="login()">
+<button class="submit-btn"
+onclick="login()">
 Login
 </button>
 
@@ -383,8 +377,7 @@ Login
 
 </div>
 
-<div id="signupModal"
-class="modal">
+<div class="modal" id="signupModal">
 
 <div class="modal-content">
 
@@ -395,16 +388,15 @@ onclick="closeSignup()">
 
 <h2>Create Account</h2>
 
-<input
-id="signupUser"
+<input id="signupUser"
 placeholder="Username">
 
-<input
-id="signupPass"
+<input id="signupPass"
 type="password"
 placeholder="Password">
 
-<button onclick="signup()">
+<button class="submit-btn"
+onclick="signup()">
 Signup
 </button>
 
@@ -413,10 +405,10 @@ Signup
 </div>
 
 <footer>
-LA8 Creator Hub
+K-Studios Creator Hub © 2026
 </footer>
 
 <script src="app.js"></script>
 
 </body>
-</html>
+</html> 
