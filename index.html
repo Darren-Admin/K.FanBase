@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LA8 Creator Hub</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+body{
+background:#0f172a;
+color:white;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+background:#111827;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+color:#00cfff;
+}
+
+nav ul{
+display:flex;
+gap:20px;
+list-style:none;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+}
+
+.hero{
+height:80vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+background:linear-gradient(135deg,#111827,#1d4ed8);
+}
+
+.hero h1{
+font-size:4rem;
+}
+
+.hero p{
+max-width:700px;
+margin-top:20px;
+}
+
+.hero button{
+margin-top:20px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:8px;
+background:#00cfff;
+cursor:pointer;
+}
+
+section{
+padding:40px;
+}
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+padding:30px;
+}
+
+.card{
+background:#111827;
+padding:25px;
+border-radius:15px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:10px;
+border:none;
+border-radius:10px;
+}
+
+.modal{
+display:none;
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.8);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:#111827;
+padding:30px;
+width:400px;
+border-radius:15px;
+}
+
+.close{
+float:right;
+cursor:pointer;
+font-size:25px;
+}
+
+.profile{
+background:#111827;
+padding:25px;
+border-radius:15px;
+text-align:center;
+}
+
+.avatar{
+width:120px;
+height:120px;
+border-radius:50%;
+background:#1e293b;
+margin:auto;
+margin-bottom:15px;
+}
+
+.project{
+background:#1e293b;
+padding:15px;
+border-radius:10px;
+margin-top:10px;
+}
+
+#notifications{
+list-style:none;
+}
+
+#notifications li{
+background:#1e293b;
+padding:10px;
+margin-top:10px;
+border-radius:8px;
+}
+
+footer{
+padding:20px;
+text-align:center;
+background:#111827;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+LA8 CREATOR HUB
+</div>
+
+<ul>
+<li><a href="#home">Home</a></li>
+<li><a href="#projects">Projects</a></li>
+<li><a href="#team">Join Team</a></li>
+<li><a href="#profile">Profile</a></li>
+</ul>
+
+<div>
+
+<button onclick="openLogin()">
+Login
+</button>
+
+<button onclick="openSignup()">
+Signup
+</button>
+
+</div>
+
+</nav>
+
+<section class="hero" id="home">
+
+<h1>LA8 Studios</h1>
+
+<p>
+Official Community Website
+for Fans, Developers,
+Builders, Animators and Creators.
+</p>
+
+</section>
+
+<div class="dashboard">
+
+<div class="card">
+<h2 id="fanCount">0</h2>
+<p>Fans</p>
+</div>
+
+<div class="card">
+<h2 id="projectCount">0</h2>
+<p>Projects</p>
+</div>
+
+<div class="card">
+<h2 id="memberCount">0</h2>
+<p>Members</p>
+</div>
+
+<div class="card">
+<h2 id="currentRole">Guest</h2>
+<p>Role</p>
+</div>
+
+</div>
+
+<section id="profile">
+
+<h2>My Profile</h2>
+
+<div class="profile">
+
+<div class="avatar"></div>
+
+<h3 id="profileName">
+Guest
+</h3>
+
+<p id="profileRole">
+Role: Guest
+</p>
+
+<p id="profileLevel">
+Level: 1
+</p>
+
+</div>
+
+</section>
+
+<section>
+
+<h2>Notifications</h2>
+
+<ul id="notifications"></ul>
+
+</section>
+
+<section id="projects">
+
+<h2>Projects</h2>
+
+<div id="projectArea"></div>
+
+</section>
+
+<section>
+
+<h2>Become A Fan</h2>
+
+<form id="fanForm">
+
+<input
+type="text"
+placeholder="Username"
+required>
+
+<button>
+Join Fanbase
+</button>
+
+</form>
+
+</section>
+
+<section id="team">
+
+<h2>Join The Team</h2>
+
+<form id="applicationForm">
+
+<input
+type="text"
+id="appName"
+placeholder="Name"
+required>
+
+<select id="appSkill">
+
+<option>Scripter</option>
+<option>Builder</option>
+<option>Animator</option>
+<option>UI Designer</option>
+<option>VFX Artist</option>
+<option>Tester</option>
+
+</select>
+
+<textarea
+id="appExperience"
+placeholder="Experience"></textarea>
+
+<button>
+Submit Application
+</button>
+
+</form>
+
+</section>
+
+<section>
+
+<h2>Admin Project Manager</h2>
+
+<input
+id="projectTitle"
+placeholder="Project Name">
+
+<textarea
+id="projectDescription"
+placeholder="Description"></textarea>
+
+<button onclick="createProject()">
+Create Project
+</button>
+
+</section>
+
+<div id="loginModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close"
+onclick="closeLogin()">
+×
+</span>
+
+<h2>Login</h2>
+
+<input
+id="loginUser"
+placeholder="Username">
+
+<input
+id="loginPass"
+type="password"
+placeholder="Password">
+
+<button onclick="login()">
+Login
+</button>
+
+</div>
+
+</div>
+
+<div id="signupModal"
+class="modal">
+
+<div class="modal-content">
+
+<span class="close"
+onclick="closeSignup()">
+×
+</span>
+
+<h2>Create Account</h2>
+
+<input
+id="signupUser"
+placeholder="Username">
+
+<input
+id="signupPass"
+type="password"
+placeholder="Password">
+
+<button onclick="signup()">
+Signup
+</button>
+
+</div>
+
+</div>
+
+<footer>
+LA8 Creator Hub
+</footer>
+
+<script src="app.js"></script>
+
+</body>
+</html>
