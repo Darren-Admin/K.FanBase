@@ -1,166 +1,431 @@
-let currentUser = null;
 
-function openLogin(){
-document.getElementById("loginModal").style.display="flex";
+
+// ================================
+// Firebase Imports
+// ================================
+ 
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+ 
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
 }
-
-function closeLogin(){
-document.getElementById("loginModal").style.display="none";
+from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+ 
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc,
+addDoc,
+collection,
+getDocs,
+serverTimestamp
 }
+from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+ 
+// ================================
+// FIREBASE CONFIG
+// REPLACE WITH YOUR OWN
+// ================================
+ 
+const firebaseConfig = {
+ 
+apiKey: "AIzaSyCBCV-MPXyx9RoT5JUj69J1SMsbBJU_koE",
 
-function openSignup(){
-document.getElementById("signupModal").style.display="flex";
-}
-
-function closeSignup(){
-document.getElementById("signupModal").style.display="none";
-}
-
-function signup(){
-
-const username =
-document.getElementById("signupUser").value;
-
-const password =
-document.getElementById("signupPass").value;
-
-if(!username || !password)
-return alert("Fill all fields");
-
-const account = {
-
-password: password,
-
-role: "Fan",
-
-level: 1,
-
-xp: 0,
-
-notifications:[
-"Welcome to LA8 Creator Hub!"
-]
-
+ 
+authDomain:
+"k-studios-creator-hub.firebaseapp.com",
+ 
+projectId:
+"k-studios-creator-hub",
+ 
+ 
+storageBucket:
+"k-studios-creator-hub.firebasestorage.app",
+ 
+ 
+messagingSenderId:
+"YOUR_SENDER_ID",
+ 
+appId:
+"910957319966",
+ 
+ 
 };
+ 
+// ================================
+// INITIALIZE
+// ================================
+ 
+const app =
+initializeApp(firebaseConfig);
+ 
+const auth =
+getAuth(app);
+ 
+const db =
+getFirestore(app);
+ 
+let currentUser = null;
+ 
+// ================================
+// MODALS
+// ================================
+ 
+window.openLogin = function(){
+  document.getElementById(
+"loginModal"
+).style.display = "flex";
 
-localStorage.setItem(
-"user_" + username,
-JSON.stringify(account)
-);
-
-updateMemberCount();
-
-alert("Account Created");
-closeSignup();
 }
 
-function login(){
+window.closeLogin = function(){
 
+document.getElementById(
+"loginModal"
+).style.display = "none";}
+ 
+window.openSignup = function(){
+ 
+document.getElementById(
+"signupModal"
+).style.display = "flex";
+ 
+}
+ 
+window.closeSignup = function(){
+ 
+document.getElementById(
+"signupModal"
+).style.display = "none";
+ 
+}
+ 
+// ================================
+// SIGNUP
+// ================================
+ 
+window.signup = async function(){
+ 
 const username =
-document.getElementById("loginUser").value;
-
+document.getElementById(
+"signupUser"
+).value.trim();
+ 
 const password =
-document.getElementById("loginPass").value;
-
-const account =
-JSON.parse(
-localStorage.getItem(
-"user_" + username
-)
+document.getElementById(
+"signupPass"
+).value.trim();
+ 
+if(!username || !password){
+ 
+alert("Fill all fields");
+return;
+ 
+}
+ 
+const email =
+`${username}@k-studioshub.com`;
+ 
+try{
+ 
+const result =
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
 );
-
-if(!account)
-return alert("User not found");
-
-if(account.password !== password)
-return alert("Wrong password");
-
-currentUser = username;
-
-document.getElementById("profileName")
-.innerText = username;
-
-document.getElementById("profileRole")
-.innerText =
-"Role: " + account.role;
-
-document.getElementById("profileLevel")
-.innerText =
-"Level: " + account.level;
-
-document.getElementById("onlineStatus")
-.innerText = "Online";
-
-loadNotifications(
-account.notifications
+ 
+await setDoc(
+ 
+doc(
+db,
+"users",
+result.user.uid
+),
+ 
+{
+ 
+username: username,
+role: "Fan",
+level: 1,
+xp: 0,
+badges: [],
+joined:
+serverTimestamp(),
+ 
+notifications:[
+"Welcome to K-Studios Creator Hub!"
+]
+ 
+}
+ 
 );
-
-alert("Welcome " + username);
+ 
+alert(
+"Account Created Successfully"
+);
+ 
+closeSignup();
+ 
+}
+catch(error){
+ 
+alert(error.message);
+ 
+}
+ 
+}
+ 
+// ================================
+// LOGIN
+// ================================
+ 
+window.login = async function(){
+ 
+const username =
+document.getElementById(
+"loginUser"
+).value.trim();
+ 
+const password =
+document.getElementById(
+"loginPass"
+).value.trim();
+ 
+const email =
+`${username}@k-studioshub.com`;
+ 
+try{
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
 
 closeLogin();
+
+}
+catch(error){
+
+alert(
+error.message
+);
+
 }
 
-function loadNotifications(list){
+}
 
-const container =
-document.getElementById("notifications");
+// ================================
+// LOGOUT
+// ================================
 
-container.innerHTML = "";
+window.logout = async function(){
 
-list.forEach(note => {
+await signOut(auth);
 
-container.innerHTML +=
-`
+alert("Logged out");
+}
+// ================================
+// AUTH STATE
+// ================================
+
+onAuthStateChanged(
+
+auth,
+
+async(user)=>{
+
+if(!user){
+
+document.getElementById(
+"profileName"
+).innerText =
+"Guest";
+
+document.getElementById(
+"profileRole"
+).innerText =
+"Role: Guest";
+
+document.getElementById(
+"profileLevel"
+  ).innerText =
+"Level: 1";
+
+document.getElementById(
+"onlineStatus"
+).innerText =
+"Offline";
+
+return;
+
+}
+
+currentUser = user;
+
+const docRef =
+doc(
+db,
+"users",
+user.uid
+);
+
+const snap =
+await getDoc(
+docRef
+);
+
+if(!snap.exists()) return;
+
+const data =
+  snap.data();
+
+document.getElementById(
+"profileName"
+).innerText =
+data.username;
+
+document.getElementById(
+"profileRole"
+).innerText =
+`Role: ${data.role}`;
+
+document.getElementById(
+"profileLevel"
+).innerText =
+`Level: ${data.level}`;
+
+document.getElementById(
+"onlineStatus"
+).innerText =
+"Online";
+loadNotifications(
+data.notifications
+);
+
+}
+
+);
+
+// ================================
+// NOTIFICATIONS
+// ================================
+
+function loadNotifications(
+
+notifications
+
+){
+
+const area =
+  document.getElementById(
+"notifications"
+);
+
+area.innerHTML = "";
+
+notifications.forEach(
+
+note=>{
+
+area.innerHTML += `
+
 <div class="notification">
+
 ${note}
+
 </div>
+
 `;
 
-});
 }
 
-document.getElementById("fanForm")
-.addEventListener(
+);
+
+}
+// ================================
+// FAN REGISTRATION
+// ================================
+
+const fanForm =
+document.getElementById(
+"fanForm"
+);
+
+if(fanForm){
+
+fanForm.addEventListener(
+
 "submit",
-function(e){
+
+async(e)=>{
 
 e.preventDefault();
 
-let fans =
-Number(
-localStorage.getItem("fans")
-)||0;
+await addDoc(
 
-fans++;
+collection(
+db,
+"fans"
+  ),
 
-localStorage.setItem(
-"fans",
-fans
-);
+{
 
-document.getElementById("fanCount")
-.innerText = fans;
+user:
+currentUser ?
+currentUser.uid :
+"guest",
 
-alert("Fan registration successful");
+joined:
+serverTimestamp()
 
 }
+
 );
 
-document.getElementById("teamForm")
-.addEventListener(
+alert(
+"Joined Fanbase"
+);
+  updateFanCount();
+
+}
+
+);
+
+}
+
+// ================================
+// TEAM APPLICATIONS
+// ================================
+
+const teamForm =
+document.getElementById(
+"teamForm"
+);
+
+if(teamForm){
+
+teamForm.addEventListener(
+
 "submit",
-function(e){
+  async(e)=>{
 
 e.preventDefault();
 
-const applications =
-JSON.parse(
-localStorage.getItem(
+await addDoc(
+
+collection(
+db,
 "applications"
-)||"[]"
-);
+),
 
-applications.push({
+{
 
 name:
 document.getElementById(
@@ -171,91 +436,125 @@ skill:
 document.getElementById(
 "appSkill"
 ).value,
-
 experience:
 document.getElementById(
 "appExperience"
-).value
+).value,
 
-});
+submitted:
+serverTimestamp()
 
-localStorage.setItem(
-"applications",
-JSON.stringify(applications)
+}
+
 );
 
 alert(
 "Application Submitted"
 );
 
-});
-function createProject(){
+}
+
+);
+
+}
+
+// ================================
+// PROJECTS
+// ================================
+window.createProject =
+async function(){
 
 const title =
 document.getElementById(
 "projectTitle"
 ).value;
 
-const desc =
+const description =
 document.getElementById(
 "projectDescription"
 ).value;
 
-if(!title) return;
+if(!title){
 
-const projects =
-JSON.parse(
-localStorage.getItem(
+alert("Project title required");
+return;
+
+}
+
+await addDoc(
+
+collection(
+db,
 "projects"
-)||"[]"
-);
+),
 
-projects.push({
+{
 
-title:title,
-description:desc,
-status:"In Progress"
+title,
+description,
 
-});
+status:
+"In Progress",
 
-localStorage.setItem(
-"projects",
-JSON.stringify(projects)
+created:
+serverTimestamp()
+
+}
+
 );
 
 renderProjects();
+
 }
 
-function renderProjects(){
+// ================================
+// LOAD PROJECTS
+// ================================
 
-const container =
+async function renderProjects(){
+
+const snapshot =
+await getDocs(
+collection(
+db,
+"projects"
+)
+);
+
+const area =
 document.getElementById(
 "projectArea"
 );
 
-container.innerHTML="";
+area.innerHTML = "";
 
-const projects =
-JSON.parse(
-localStorage.getItem(
-"projects"
-)||"[]"
-);
+let total = 0;
 
-projects.forEach(project => {
+snapshot.forEach(doc=>{
 
-container.innerHTML +=
-`
+total++;
+
+const project =
+doc.data();
+
+area.innerHTML += `
+
 <div class="project">
 
-<h3>${project.title}</h3>
+<h3>
+${project.title}
+</h3>
 
-<p>${project.description}</p>
+<p>
+${project.description}
+</p>
 
-<p>Status:
-<b>${project.status}</b></p>
+<p>
+${project.status}
+</p>
 
 </div>
+
 `;
 
 });
@@ -263,122 +562,177 @@ container.innerHTML +=
 document.getElementById(
 "projectCount"
 ).innerText =
-projects.length;
+total;
+
 }
+// ================================
+// COMMUNITY FORUM
+// ================================
 
-function createPost(){
+window.createPost =
+async function(){
 
-const input =
+const postText =
 document.getElementById(
 "postInput"
+).value;
+
+if(!postText) return;
+
+let username =
+"Guest";
+
+if(currentUser){
+
+const profile =
+await getDoc(
+doc(
+db,
+"users",
+currentUser.uid
+)
 );
 
-const text = input.value;
+if(profile.exists()){
 
-if(!text) return;
+username =
+profile.data().username;
 
-const posts =
-JSON.parse(
-localStorage.getItem(
-"posts"
-)||"[]"
-);
-
-posts.push({
-
-author:
-currentUser || "Guest",
-
-message:text
-
-});
-
-localStorage.setItem(
-"posts",
-JSON.stringify(posts)
-);
-
-input.value="";
-
-renderPosts();
 }
 
-function renderPosts(){
+}
 
-const container =
+await addDoc(
+
+collection(
+db,
+"posts"
+),
+
+{
+
+author:
+username,
+
+message:
+postText,
+
+created:
+serverTimestamp()
+
+}
+
+);
+
+document.getElementById(
+"postInput"
+).value = "";
+
+renderPosts();
+
+}
+
+// ================================
+// LOAD POSTS
+// ================================
+
+async function renderPosts(){
+
+const snapshot =
+await getDocs(
+collection(
+db,
+"posts"
+));
+
+const area =
 document.getElementById(
 "forumPosts"
 );
 
-container.innerHTML="";
+area.innerHTML = "";
 
-const posts =
-JSON.parse(
-localStorage.getItem(
-"posts"
-)||"[]"
-);
+snapshot.forEach(post=>{
 
-posts.reverse().forEach(post=>{
+const data =
+post.data();
 
-container.innerHTML +=
-`
+area.innerHTML += `
+
 <div class="project">
 
-<h4>${post.author}</h4>
+<h4>
 
-<p>${post.message}</p>
+${data.author}
+</h4>
+
+<p>
+${data.message}
+</p>
 
 </div>
+
 `;
 
 });
+
 }
 
-function updateMemberCount(){
+// ================================
+// MEMBER COUNT
+// ================================
 
-let total = 0;
+async function updateMemberCount(){
 
-for(
-let i=0;
-i<localStorage.length;
-i++
-){
-
-const key =
-localStorage.key(i);
-
-if(
-key.startsWith(
-"user_"
+const users =
+await getDocs(
+collection(
+db,
+"users"
 )
-){
-
-total++;
-
-}
-
-}
+);
 
 document.getElementById(
 "memberCount"
-).innerText = total;
+).innerText =
+users.size;
+
 }
 
-function initialize(){
+// ================================
+// FAN COUNT
+// ================================
+
+async function updateFanCount(){
+
+const fans =
+await getDocs(
+collection(
+db,
+"fans"
+)
+);
 
 document.getElementById(
 "fanCount"
 ).innerText =
-localStorage.getItem(
-"fans"
-)||0;
+fans.size;
 
-updateMemberCount();
+}
 
-renderProjects();
+// ================================
+// INITIALIZE
+// ================================
 
-renderPosts();
+async function initialize(){
+
+await updateMemberCount();
+
+await updateFanCount();
+
+await renderProjects();
+
+await renderPosts();
 
 }
 
